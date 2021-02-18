@@ -1,0 +1,5 @@
+float32 emissivity
+float32 transmissivity
+float32 ambientTemperature
+---
+bool success

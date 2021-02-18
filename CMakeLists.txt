@@ -41,6 +41,7 @@ add_service_files(
     srv
   FILES
     AutoFlag.srv
+    RadiationParameters.srv
     TemperatureRange.srv
     Palette.srv
 )
@@ -147,4 +148,3 @@ install(TARGETS optris_colorconvert_node optris_imager_node
   #LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-

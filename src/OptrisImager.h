@@ -11,6 +11,7 @@
 #include "std_msgs/Float32.h"
 #include "std_srvs/Empty.h"
 #include "optris_drivers/AutoFlag.h"
+#include "optris_drivers/RadiationParameters.h"
 #include "optris_drivers/TemperatureRange.h"
 #include "optris_drivers/Temperature.h"
 #include "optris_drivers/Flag.h"
@@ -99,6 +100,11 @@ public:
    * ROS service callback
    */
   bool onForceFlag(std_srvs::Empty::Request& req, std_srvs::Empty::Response& res);
+
+  /**
+   * ROS service callback
+   */
+  bool onSetRadiationParameters(RadiationParameters::Request &req, RadiationParameters::Response &res);
 
   /**
    * ROS service callback
