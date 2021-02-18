@@ -93,17 +93,30 @@ include_directories(
 
 ## Declare a cpp executable
 add_executable(optris_imager_node       src/optris_imager_node.cpp src/OptrisImager.cpp)
+add_executable(optris_raw_subscriber_node src/optris_raw_subscriber_node.cpp src/OptrisImagerPlayback.cpp src/OptrisImager.cpp)
 add_executable(optris_colorconvert_node src/optris_colorconvert_node.cpp)
 add_executable(optris_binary_image_node src/optris_binary_image_node.cpp)
 
 ## make sure msg/srvs are generated before building the targets
 ## also, the libs must be copied before trying to build the other files
 add_dependencies(optris_imager_node optris_drivers_generate_messages_cpp)
+add_dependencies(optris_raw_subscriber_node optris_drivers_generate_messages_cpp)
 add_dependencies(optris_colorconvert_node optris_drivers_generate_messages_cpp)
 add_dependencies(optris_binary_image_node ${PROJECT_NAME}_gencfg optris_drivers_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(optris_imager_node
+  ${catkin_LIBRARIES}
+  ${Boost_LIBRARIES}
+  irimager
+  irimageprocessing
+  ircore
+  udev
+  pthread
+  usb-1.0
+)
+
+target_link_libraries(optris_raw_subscriber_node
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
   irimager
@@ -143,7 +156,7 @@ target_link_libraries(optris_binary_image_node
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 ## Mark executables and/or libraries for installation
-install(TARGETS optris_colorconvert_node optris_imager_node
+install(TARGETS optris_colorconvert_node optris_imager_node optris_raw_subscriber_node
   #ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   #LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

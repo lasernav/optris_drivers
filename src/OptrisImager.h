@@ -9,6 +9,7 @@
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/TimeReference.h>
 #include "std_msgs/Float32.h"
+#include "std_msgs/ByteMultiArray.h"
 #include "std_srvs/Empty.h"
 #include "optris_drivers/AutoFlag.h"
 #include "optris_drivers/RadiationParameters.h"
@@ -111,7 +112,7 @@ public:
    */
   bool onSetTemperatureRange(TemperatureRange::Request &req, TemperatureRange::Response &res);
 
-private:
+protected:
 
   evo::IRImager _imager;
 
@@ -120,6 +121,9 @@ private:
   unsigned int _img_cnt;
 
   unsigned char* _bufferRaw;
+  unsigned int _bufferSize;
+
+  std_msgs::ByteMultiArray _raw_data;
 
   sensor_msgs::Image _thermal_image;
 
@@ -132,6 +136,8 @@ private:
   image_transport::Publisher _thermal_pub;
 
   image_transport::Publisher _visible_pub;
+
+  ros::Publisher _raw_pub;
 
   ros::Publisher _temp_pub;
 

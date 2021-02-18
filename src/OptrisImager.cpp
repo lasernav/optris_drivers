@@ -8,9 +8,14 @@ OptrisImager::OptrisImager(evo::IRDevice* dev, evo::IRDeviceParams params)
   _imager.init(&params, dev->getFrequency(), dev->getWidth(), dev->getHeight(), dev->controlledViaHID());
   _imager.setClient(this);
 
+  _bufferSize = dev->getRawBufferSize();
   _bufferRaw = new unsigned char[dev->getRawBufferSize()];
 
   ros::NodeHandle n;
+
+  _raw_pub =  n.advertise<std_msgs::ByteMultiArray>("raw", 1);
+  _raw_data.data.resize(dev->getRawBufferSize());
+
   image_transport::ImageTransport it(n);
 
   _thermal_pub = it.advertise("thermal_image", 1);
@@ -73,6 +78,9 @@ void OptrisImager::onTimer(const ros::TimerEvent& event)
   int retval = _dev->getFrame(_bufferRaw);
   if(retval==evo::IRIMAGER_SUCCESS)
   {
+    std::copy(_bufferRaw, _bufferRaw + _bufferSize, _raw_data.data.begin());
+    _raw_pub.publish(_raw_data);
+
     _imager.process(_bufferRaw);
   }
   if(retval==evo::IRIMAGER_DISCONNECTED)
