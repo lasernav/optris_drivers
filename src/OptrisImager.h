@@ -149,6 +149,8 @@ protected:
 
   ros::ServiceServer _sForce;
 
+  ros::ServiceServer _sRadParam;
+
   ros::ServiceServer _sTemp;
 };
 

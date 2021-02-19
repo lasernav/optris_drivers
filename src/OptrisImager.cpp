@@ -13,15 +13,16 @@ OptrisImager::OptrisImager(evo::IRDevice* dev, evo::IRDeviceParams params)
 
   ros::NodeHandle n;
 
+  ros::NodeHandle nh("~");
   //emissivity settings
-  if (n.hasParam("~emissivity"))
+  if (nh.hasParam("emissivity"))
   {
     float emissivity = 1.0;
     float transmissivity = 0.0;
     float ambientTemperature = -9999.0;
-    n.param("~emissivity", emissivity, emissivity);
-    n.param("~transmissivity", transmissivity, transmissivity);
-    n.param("~ambientTemperature", ambientTemperature, ambientTemperature);
+    nh.param("emissivity", emissivity, emissivity);
+    nh.param("transmissivity", transmissivity, transmissivity);
+    nh.param("ambientTemperature", ambientTemperature, ambientTemperature);
     ROS_INFO("Radiation param: e=%f t=%f Tamb=%f", emissivity, transmissivity, ambientTemperature);
     _imager.setRadiationParameters(emissivity, transmissivity, ambientTemperature);
   }
@@ -57,6 +58,7 @@ OptrisImager::OptrisImager(evo::IRDevice* dev, evo::IRDeviceParams params)
 
   _sAuto  = n.advertiseService("auto_flag",  &OptrisImager::onAutoFlag, this);
   _sForce = n.advertiseService("force_flag", &OptrisImager::onForceFlag, this);
+  _sRadParam  = n.advertiseService("radiation_parameters", &OptrisImager::onSetRadiationParameters, this);
   _sTemp  = n.advertiseService("temperature_range", &OptrisImager::onSetTemperatureRange, this);
 
   // advertise all of the camera's temperatures in a single custom message
