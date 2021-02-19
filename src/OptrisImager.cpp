@@ -13,6 +13,19 @@ OptrisImager::OptrisImager(evo::IRDevice* dev, evo::IRDeviceParams params)
 
   ros::NodeHandle n;
 
+  //emissivity settings
+  if (n.hasParam("~emissivity"))
+  {
+    float emissivity = 1.0;
+    float transmissivity = 0.0;
+    float ambientTemperature = -9999.0;
+    n.param("~emissivity", emissivity, emissivity);
+    n.param("~transmissivity", transmissivity, transmissivity);
+    n.param("~ambientTemperature", ambientTemperature, ambientTemperature);
+    ROS_INFO("Radiation param: e=%f t=%f Tamb=%f", emissivity, transmissivity, ambientTemperature);
+    _imager.setRadiationParameters(emissivity, transmissivity, ambientTemperature);
+  }
+
   _raw_pub =  n.advertise<std_msgs::ByteMultiArray>("raw", 1);
   _raw_data.data.resize(dev->getRawBufferSize());
 
