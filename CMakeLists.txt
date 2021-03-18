@@ -55,6 +55,7 @@ generate_messages(
 
 generate_dynamic_reconfigure_options(
   cfg/Threshold.cfg
+  cfg/RadiationParameters.cfg
 )
 
 ###################################

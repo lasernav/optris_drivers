@@ -169,11 +169,14 @@ bool OptrisImager::onForceFlag(std_srvs::Empty::Request& req, std_srvs::Empty::R
 
 bool OptrisImager::onSetRadiationParameters(RadiationParameters::Request &req, RadiationParameters::Response &res)
 {
-  _imager.setRadiationParameters(req.emissivity, req.transmissivity, req.ambientTemperature);
-
+  setRadiationParameters(req.emissivity, req.transmissivity, req.ambientTemperature);
   res.success = true;
 
   return true;
+}
+
+void OptrisImager::setRadiationParameters(double emissivity, double transmissivity, double ambientTemperature) {
+  _imager.setRadiationParameters(emissivity, transmissivity, ambientTemperature);
 }
 
 bool OptrisImager::onSetTemperatureRange(TemperatureRange::Request &req, TemperatureRange::Response &res)

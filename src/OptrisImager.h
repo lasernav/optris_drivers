@@ -107,6 +107,8 @@ public:
    */
   bool onSetRadiationParameters(RadiationParameters::Request &req, RadiationParameters::Response &res);
 
+  void setRadiationParameters(double emissivity, double transmissivity, double ambientTemperature);
+
   /**
    * ROS service callback
    */

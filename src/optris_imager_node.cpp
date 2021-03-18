@@ -37,11 +37,36 @@
  *********************************************************************/
 
 #include <sys/stat.h>
+#include <dynamic_reconfigure/server.h>
+
+#include "optris_drivers/RadiationParametersConfig.h"
 #include "OptrisImager.h"
+
+optris_drivers::OptrisImager * _imager = NULL;
+
+/**
+ * Callback function for dynamic reconfigure package
+ * @param config        configuration
+ * @param level         level of configuration
+ */
+void callback(optris_drivers::RadiationParametersConfig &config, uint32_t level)
+{
+  if (_imager) {
+    _imager->setRadiationParameters(config.emissivity, config.transmissivity, config.ambient_temperature);
+  }
+}
+
 
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "optris_imager_node");
+
+  // set up for dynamic reconfigure server
+  dynamic_reconfigure::Server<optris_drivers::RadiationParametersConfig> server;
+  dynamic_reconfigure::Server<optris_drivers::RadiationParametersConfig>::CallbackType f;
+
+  f = boost::bind(&callback, _1, _2);
+  server.setCallback(f);
 
   // private node handle to support command line parameters for rosrun
   ros::NodeHandle n_("~");
@@ -75,6 +100,7 @@ int main(int argc, char **argv)
 
   // Give control to class instance
   optris_drivers::OptrisImager imager(dev, params);
+  _imager = &imager;
   imager.run();
 
   return 0;
