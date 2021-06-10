@@ -27,6 +27,14 @@ OptrisImager::OptrisImager(evo::IRDevice* dev, evo::IRDeviceParams params)
     _imager.setRadiationParameters(emissivity, transmissivity, ambientTemperature);
   }
 
+  if (nh.hasParam("flip"))
+  {
+    nh.param("flip", _flip, false);
+    ROS_INFO("Filp image");
+  } else {
+    _flip = false;
+  }
+
   _raw_pub =  n.advertise<std_msgs::ByteMultiArray>("raw", 1);
   _raw_data.data.resize(dev->getRawBufferSize());
 
@@ -106,7 +114,16 @@ void OptrisImager::onTimer(const ros::TimerEvent& event)
 
 void OptrisImager::onThermalFrame(unsigned short* image, unsigned int w, unsigned int h, evo::IRFrameMetadata meta, void* arg)
 {
-  memcpy(&_thermal_image.data[0], image, w * h * sizeof(*image));
+  unsigned short * dest = (unsigned short *) &_thermal_image.data[0];
+  if (_flip) {
+    for (unsigned int r = 0; r < h; r++) {
+      for (unsigned int c = 0; c < w; c++) {
+        memcpy(dest + w * (h - 1 - r) + (w - 1 - c), image + w * r + c, sizeof(*image));
+      }
+    }
+  } else {
+    memcpy(dest, image, w * h * sizeof(*image));
+  }
 
   _thermal_image.header.seq = ++_img_cnt;
   _thermal_image.header.stamp = ros::Time::now();
@@ -133,7 +150,18 @@ void OptrisImager::onVisibleFrame(unsigned char* image, unsigned int w, unsigned
 {
   if(_visible_pub.getNumSubscribers()==0) return;
 
-  memcpy(&_visible_image.data[0], image, 2 * w * h * sizeof(*image));
+  unsigned short * src = (unsigned short *) image;
+  unsigned short * dest = (unsigned short *) &_visible_image.data[0];
+  if (_flip) {
+    for (unsigned int r = 0; r < h; r++) {
+      for (unsigned int c = 0; c < w; c++) {
+        memcpy(dest + w * (h - 1 - r) + (w - 1 - c), src +  (w * r + c), sizeof(*src));
+      }
+    }
+  } else {
+    memcpy(dest, src, w * h * sizeof(*src));
+  }
+
 
   _visible_image.header.seq   = _img_cnt;
   _visible_image.header.stamp = ros::Time::now();

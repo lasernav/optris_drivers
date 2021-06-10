@@ -120,6 +120,8 @@ protected:
 
   evo::IRDevice* _dev;
 
+  bool _flip;
+
   unsigned int _img_cnt;
 
   unsigned char* _bufferRaw;
